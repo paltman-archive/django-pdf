@@ -1,0 +1,21 @@
+<h1>{{ pdf.name }}</h1>
+
+<ul>
+	<li>Title: {{ pdf.name }}</li>
+	<li>UUID: <code>{{ pdf.uuid }}</code></li>
+	<li>Owner: {{ pdf.user }}</li>
+	<li>Remote: {{ pdf.remote_document }}</li>
+	<li>Status: {{ pdf.get_status_display }}</li>
+	{% if pdf.date_uploaded %}     <li>Uploaded: {{ pdf.date_uploaded }}</li>{% endif %}
+	{% if pdf.date_stored %}       <li>Stored: {{ pdf.date_stored }}</li>{% endif %}
+	{% if pdf.date_queued %}       <li>Queued: {{ pdf.date_queued }}</li>{% endif %}
+	{% if pdf.date_process_start %}<li>Process Start: {{ pdf.date_process_start }}</li>{% endif %}
+	{% if pdf.date_process_end %}  <li>Process End: {{ pdf.date_process_end }}</li>{% endif %}
+	{% if pdf.date_exception %}    <li>Exception: {{ pdf.date_exception }}</a></li>
+	<li><pre>{{ pdf.exception }}</pre></li>
+	{% endif %}
+</ul>
+
+{% for image in pdf.page_images %}
+<p><a href="{{ image }}" target="_blank"><img width="250" style="border: 1px solid black;" src="{{ image }}" border="0" /></a></p>
+{% endfor %}

@@ -1,0 +1,4 @@
+django
+celery
+boto
+simplejson

@@ -1,0 +1,22 @@
+<table border="0" cellspacing="5" cellpadding="5">
+<tr>
+	<th>Document</th>
+	<th>Status</th>
+	<th>Date Uploaded</th
+	<th>Date Stored</th>
+	<th>Date Queued</th>
+	<th>Date Processing Started</th>
+	<th>Date Processing Finished</th>
+	<th>Date of Error</th>
+</tr>
+{% for pdf in pdfs %}<tr>
+	<td><a href="{{ pdf.get_detail_url }}">{{ pdf.name }}</a></td>
+    <td>{{ pdf.get_status_display }}</td>
+	<td>{% if pdf.date_uploaded %}{{ pdf.date_uploaded }}{% endif %}</td>
+	<td>{% if pdf.date_stored %}{{ pdf.date_stored }}{% endif %}</td>
+	<td>{% if pdf.date_queued %}{{ pdf.date_queued }}{% endif %}</td>
+	<td>{% if pdf.date_process_start %}{{ pdf.date_process_start }}{% endif %}</td>
+	<td>{% if pdf.date_process_end %}{{ pdf.date_process_end }}{% endif %}</td>
+	<td>{% if pdf.date_exception %}{{ pdf.date_exception }}{% endif %}</td>
+</tr>{% endfor %}
+</table>

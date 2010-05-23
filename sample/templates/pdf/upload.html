@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="login">
+	<h3>Upload a Document</h3>
+	
+	<div id="form">
+		
+	{% if form.errors %}
+	  <p class="error">{{ form.errors }}</p>
+	{% endif %}
+
+	<form enctype="multipart/form-data" method="post" action=".">{% csrf_token %}
+		{{ form.as_p }}
+		<p><input type="submit" value="Upload"></p>
+	</form>
+		
+	</div>
+</div>
+{% endblock %}

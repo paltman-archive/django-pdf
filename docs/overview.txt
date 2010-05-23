@@ -1,0 +1,20 @@
+django-pdf
+==========
+
+`django-pdf` is an app that provides the ability to take user uploads of PDF
+documents that are then subsequently stored on S3 and converted to single
+png images for each page in the PDF.
+
+Non Python Requirements
+-----------------------
+
+In order to accomplish this processing, Amazon AWS is used via the `boto`
+library.  In addition, to provide a better user experience, celery/rabbitmq are
+used to facilitate background transfer of PDF uploads to S3 instead of holding
+the request/response cycle open during transfer.
+
+`boto` and `celery` will be installed through normal pip processing of the
+included requirements.txt file.  However, you will need to install rabbitmq
+in order for uploads to get processed.
+
+In addition, you will need an Amazon AWS account with access to EC2 enabled.
