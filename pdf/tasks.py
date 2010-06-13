@@ -9,7 +9,6 @@ from django.conf import settings
 import boto
 
 from celery.decorators import task
-from celery.registry import tasks
 from celery.task import PeriodicTask
 
 from pdf.models import Document
