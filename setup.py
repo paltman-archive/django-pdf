@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='django-pdf',
-      version='1.0.0',
+      version='1.0.1',
       description='A Django app for managing and processing PDF documents.',
       author='Patrick Altman',
       author_email='paltman@gmail.com',
@@ -20,5 +20,5 @@ setup(name='django-pdf',
     ],
     include_package_data = True,
     zip_safe = False,
-    install_requires = ['django', 'celery', 'boto', 'simplejson']
+    install_requires = ['django', 'celery', 'boto', 'simplejson', 'ghettoq']
 )

@@ -1,0 +1,58 @@
+.. _ref-django-pdf-gettingstarted:
+
+
+===============
+Getting started
+===============
+
+This document is designed to get you up and running with ``django-pdf``...
+
+
+Prerequisites
+=============
+
+These are the requirements to run ``django-pdf``:
+
+ * Python **2.4+** (Python 3.x is **not** supported yet)
+ * Django **1.2+**
+ * boto
+ * celery
+ * ghettomq (This is optional, in case you don't want to use RabbitMQ)
+
+These dependencies should be added to your ``requirements/project.txt`` file
+and installed using pip_. For example::
+
+    pip install -r requirements/project.txt
+
+In addition to the software requirements outlined above, you will need an
+`Amazon AWS`_ account that has EC2 services enabled to be able to run background
+jobs on the cloud.
+
+
+Installation
+============
+
+Add ``pdf`` to your ``INSTALLED_APPS``:
+
+.. code-block:: python
+
+    INSTALLED_APPS = [
+        # ...
+        "ghettoq",
+        "celery",
+        "pdf",
+    ]
+
+Hook up ``pdf`` to your URLconf:
+
+.. code-block:: python
+
+    urlpatterns = patterns("",
+        # ...
+        url(r"^docs/", include("pdf.urls"))
+    )
+
+
+
+.. _pip: http://pip.openplans.org/
+.. _Amazon AWS: http://aws.amazon.com/

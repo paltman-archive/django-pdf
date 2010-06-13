@@ -127,13 +127,22 @@ while True:
 """
 
 
+REQUEST_QUEUE = getattr(settings, "PDF_REQUEST_QUEUE", "pdf_requests")
+RESPONSE_QUEUE = getattr(settings, "PDF_RESPONSE_QUEUE", "pdf_responses")
+ACL = getattr(settings, "PDF_AWS_ACL", "public-read")
+AMI_ID = getattr(settings, "PDF_AMI_ID", "ami-bb709dd2")
+KEYPAIR = getattr(settings, "PDF_KEYPAIR_NAME", None)
+MAX_INSTANCES = getattr(settings, 'PDF_MAX_NODES', 20)
+SECURITY_GROUPS = getattr(settings, 'PDF_SECURITY_GROUPS', None)
+
+
 def queue_json_message(doc, doc_key):
     key_name = doc_key.name.replace(os.path.basename(doc_key.name), "message-%s.json" % str(uuid4()))
     key = doc_key.bucket.new_key(key_name)
     message_data = simplejson.dumps({'bucket': doc_key.bucket.name, 'key': doc_key.name, 'uuid': doc.uuid})
     key.set_contents_from_string(message_data)
     msg_body = {'bucket': key.bucket.name, 'key': key.name}
-    queue = boto.connect_sqs(settings.PDF_AWS_KEY, settings.PDF_AWS_SECRET).create_queue(settings.PDF_REQUEST_QUEUE)
+    queue = boto.connect_sqs(settings.PDF_AWS_KEY, settings.PDF_AWS_SECRET).create_queue(REQUEST_QUEUE)
     msg = queue.new_message(body=simplejson.dumps(msg_body))
     queue.write(msg)
 
@@ -144,7 +153,7 @@ def upload_file_to_s3(doc):
     name = '%s/%s' % (doc.uuid, os.path.basename(file_path))
     k = b.new_key(name)
     k.set_contents_from_filename(file_path)
-    k.set_acl(settings.PDF_AWS_ACL)
+    k.set_acl(ACL)
     return k
 
 
@@ -175,7 +184,7 @@ class CheckResponseQueueTask(PeriodicTask):
 
     def _dequeue_json_message(self):
         sqs = boto.connect_sqs(settings.PDF_AWS_KEY, settings.PDF_AWS_SECRET)
-        queue = sqs.create_queue(settings.PDF_RESPONSE_QUEUE)
+        queue = sqs.create_queue(RESPONSE_QUEUE)
         msg = queue.read()
         if msg is not None:
             data = simplejson.loads(msg.get_body())
@@ -204,16 +213,10 @@ class CheckQueueLevelsTask(PeriodicTask):
     run_every = timedelta(seconds=60)
 
     def run(self, **kwargs):
-        max_instances = 20
-        if hasattr(settings, 'PDF_MAX_NODES'):
-            max_instances = settings.PDF_MAX_NODES
-        security_groups = None
-        if hasattr(settings, 'PDF_SECURITY_GROUPS'):
-            security_groups = settings.PDF_SECURITY_GROUPS
         ec2 = boto.connect_ec2(settings.PDF_AWS_KEY, settings.PDF_AWS_SECRET)
         sqs = boto.connect_sqs(settings.PDF_AWS_KEY, settings.PDF_AWS_SECRET)
 
-        queue = sqs.create_queue(settings.PDF_REQUEST_QUEUE)
+        queue = sqs.create_queue(REQUEST_QUEUE)
         num = queue.count()
         launched = 0
         icount = 0
@@ -221,22 +224,22 @@ class CheckQueueLevelsTask(PeriodicTask):
         reservations = ec2.get_all_instances()
         for reservation in reservations:
             for instance in reservation.instances:
-                if instance.state == "running" and instance.image_id == settings.PDF_AMI_ID:
+                if instance.state == "running" and instance.image_id == AMI_ID:
                     icount += 1
-        to_boot = min(num - icount, max_instances)
+        to_boot = min(num - icount, MAX_INSTANCES)
 
         if to_boot > 0:
             startup = BOOTSTRAP_SCRIPT % {
                 'KEY': settings.PDF_AWS_KEY,
                 'SECRET': settings.PDF_AWS_SECRET,
-                'RESPONSE_QUEUE': settings.PDF_RESPONSE_QUEUE,
-                'REQUEST_QUEUE': settings.PDF_REQUEST_QUEUE}
+                'RESPONSE_QUEUE': RESPONSE_QUEUE,
+                'REQUEST_QUEUE': REQUEST_QUEUE}
             r = ec2.run_instances(
-                image_id=settings.PDF_AMI_ID,
+                image_id=AMI_ID,
                 min_count=to_boot,
                 max_count=to_boot,
-                key_name=settings.PDF_KEYPAIR_NAME,
-                security_groups=security_groups,
+                key_name=KEYPAIR,
+                security_groups=SECURITY_GROUPS,
                 user_data=startup)
             launched = len(r.instances)
         return launched

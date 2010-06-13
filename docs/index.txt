@@ -1,0 +1,26 @@
+.. _ref-django-pdf-index:
+
+==========
+django-pdf
+==========
+
+``django-pdf`` is an app that provides the ability to take user uploads of PDF
+documents that are then subsequently stored on S3 and converted to single
+png images for each page in the PDF.
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   gettingstarted
+   reference
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

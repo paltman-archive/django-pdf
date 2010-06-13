@@ -50,26 +50,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     
     # apps for this sample project
+    "ghettoq",
     'celery',
     'pdf'
 )
 
 # pdf app settings
-PDF_UPLOAD_PATH = ''         # Path on webserver where PDF files are uploaded to at first
-PDF_REQUEST_QUEUE = ''       # Queue to transmit requests
-PDF_RESPONSE_QUEUE = ''      # Queue to transmit responses
 PDF_UPLOAD_BUCKET = ''       # Where the documents should be uploaded to
-PDF_AWS_ACL = 'public-read'  # ACL to use to record data as
-PDF_AMI_ID = 'ami-bb709dd2'  # Cononical Ubuntu 9.10 Image - http://developer.amazonwebservices.com/connect/entry.jspa?externalID=2754
 PDF_AWS_KEY = ''             # AWS Key for accessing Bootstrap Bucket and Queues
 PDF_AWS_SECRET = ''          # AWS Secret Key for accessing Bootstrap Bucket and Queues
-PDF_KEYPAIR_NAME = ''        # The keypair name of your EC2 account
 
-# celery/rabbitmq settings
-BROKER_HOST = "127.0.0.1"
-BROKER_PORT = 5672
-BROKER_VHOST = "/"
-BROKER_USER = "guest"
-BROKER_PASSWORD = "guest"
-
+CARROT_BACKEND = "ghettoq.taproot.Database"
 CELERY_RESULT_BACKEND = "amqp"

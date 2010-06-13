@@ -1,0 +1,243 @@
+.. _ref-django-pdf-reference:
+
+
+=========
+Reference
+=========
+
+This document covers various components of ``django-pdf``.
+
+
+Settings
+========
+
+``PDF_UPLOAD_PATH``
+-------------------
+
+Path on web server where PDF files are uploaded to at first.  Defaults to
+``os.path.join(settings.MEDIA_ROOT, "uploads")``.
+
+::
+
+    PDF_UPLOAD_PATH = os.path.join(settings.MEDIA_ROOT, "uploads")
+
+
+``PDF_REQUEST_QUEUE``
+---------------------
+
+Amazon SQS queue name which will be used to transmit the requests.  Defaults to
+``pdf_requests``.
+
+::
+
+    PDF_REQUEST_QUEUE = "pdf_requests"
+
+
+``PDF_RESPONSE_QUEUE``
+-----------------------
+
+Amazon SQS queue name which will be used in the cloud to post response messages
+after jobs complete.  Defaults to ``pdf_responses``.
+
+::
+
+    PDF_RESPONSE_QUEUE = "pdf_responses"
+
+
+``PDF_AWS_ACL``
+---------------
+
+The ACL of the Amazon S3 objects that will be created.  Defaults to ``public-read``.
+
+::
+
+    PDF_AWS_ACL = "public-read"
+
+
+``PDF_AMI_ID``
+--------------
+
+The Amazon EC2 Image ID of the machine that will be used to boot up, bootstrap,
+and then run the script to convert PDFs.  This defaults to the
+`Canonical Ubuntu Image`_.
+
+::
+
+    PDF_AMI_ID = "ami-bb709dd2"
+
+
+``PDF_MAX_NODES``
+-----------------
+
+The maximum number of concurrent nodes to boot up on EC2.  Defaults to 20.
+
+::
+
+    PDF_MAX_NODES = 150
+
+By default, accounts on EC2 are given a concurrency maximum of 20 nodes.  You
+can request more, but you will get an exception from AWS if you request to boot
+more nodes that your account is configured to be allowed.
+
+
+``PDF_SECURITY_GROUPS``
+-----------------------
+
+This is a list of strings which correspond to named and previously configured
+security groups for EC2 nodes to run under.  More specifically, they define
+firewall rules.  Defaults to None since for this application, the nodes don't
+need to be access externally.
+
+::
+
+    PDF_SECURITY_GROUPS = ["web", "ftp"]
+
+
+``PDF_KEYPAIR_NAME``
+--------------------
+
+The AWS EC2 Keypair name to use in booting your images (in case you want to log
+into them):
+
+::
+
+    PDF_KEYPAIR_NAME = "my-keypair-name"
+
+
+``PDF_AWS_KEY``
+---------------
+
+**Required**.  AWS Key for accessing Bootstrap Bucket and Queues.
+
+::
+
+    PDF_AWS_KEY = "xxxxxxxx"
+
+
+``PDF_AWS_SECRET``
+------------------
+
+**Required**.  AWS Secret Key for accessing Bootstrap Bucket and Queues.
+
+::
+
+    PDF_AWS_SECRET = "xxxxxxxxxxxx"
+
+``PDF_UPLOAD_BUCKET``
+---------------------
+
+**Required**.  The Amazon S3 bucket where PDF files will be uploaded to.
+
+::
+
+    PDF_UPLOAD_BUCKET = "my_pdf_bucket"  # must be globally unique
+
+
+
+Named URLs
+==========
+
+The named URLs in this app should enable the use of of the ``{% url %}``
+template tag as well as ``reverse`` lookups in your project code without having
+to know the implementation details of this app.
+
+
+pdf_list
+--------
+
+Renders the `list.html`_ template with a collection of ``pdf.models.Document``
+objects in context.
+
+
+pdf_upload
+----------
+
+On ``GET`` requests, renders the `upload.html`_ template with a
+``pdf.forms.DocumentForm`` instance in context.
+
+On ``POST`` requests, process the form and handle the upload, in addition to
+kicking off the back ground asynchronous task to process the upload.  It then
+redirects to `pdf_list`_.
+
+
+pdf_detail
+----------
+
+Renders the `detail.html`_ template with a single ``pdf.models.Document``
+instance in context.
+
+:keyword arguments: The UUID of the document to display.  Must match ``(?P<uuid>[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})``.
+
+
+
+Templates
+=========
+
+Templates should be placed in an ``pdf/`` folder at the root of one of your
+template search paths.
+
+
+detail.html
+-----------
+
+:context: ``pdf``
+
+
+list.html
+---------
+
+:context: ``pdfs``
+
+
+upload.html
+-----------
+
+:context: ``form``
+
+
+Modules
+=======
+
+
+``pdf.admin``
+-------------
+
+.. automodule:: pdf.admin
+   :members:
+   :undoc-members:
+
+
+``pdf.forms``
+-------------
+
+.. automodule:: pdf.forms
+   :members:
+   :undoc-members:
+
+
+``pdf.models``
+--------------
+
+.. automodule:: pdf.models
+   :members:
+   :undoc-members:
+
+
+``pdf.tasks``
+-------------
+
+.. automodule:: pdf.tasks
+   :members:
+   :undoc-members:
+
+
+``pdf.views``
+-------------
+
+.. automodule:: pdf.views
+   :members:
+   :undoc-members:
+
+
+
+.. _Canonical Ubuntu Image: http://developer.amazonwebservices.com/connect/entry.jspa?externalID=2754
