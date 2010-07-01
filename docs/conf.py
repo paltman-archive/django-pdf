@@ -5,6 +5,8 @@ sys.path.append(os.path.abspath(os.curdir))
 sys.path.append(os.path.abspath(os.pardir))
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
+VERSION = __import__('pdf').__version__
+
 extensions = ['sphinx.ext.autodoc']
 templates_path = ['_templates']
 source_suffix = '.txt'
@@ -12,8 +14,8 @@ master_doc = 'index'
 
 project = u'django-pdf'
 copyright = u'2010, Patrick Altman'
-version = '1.0.0'
-release = '1.0.0'
+version = VERSION
+release = VERSION
 
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'

@@ -22,7 +22,8 @@ DOCUMENT_STATES = (
     ('E', _('Processing Error')))
 
 
-UPLOAD_PATH = getattr(settings, "PDF_UPLOAD_PATH", os.path.join(settings.MEDIA_ROOT, "uploads"))
+DEFAULT_PATH = os.path.join(settings.MEDIA_ROOT, "uploads")
+UPLOAD_PATH = getattr(settings, "PDF_UPLOAD_PATH", DEFAULT_PATH)
 
 
 class Document(models.Model):

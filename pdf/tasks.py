@@ -242,4 +242,3 @@ class CheckQueueLevelsTask(PeriodicTask):
                 user_data=startup)
             launched = len(r.instances)
         return launched
-
